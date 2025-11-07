@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "camera-controls": "github:yomotsu/camera-controls",
+    "express": "^5.1.0",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "vite": "^7.1.6"
+  }
+}
