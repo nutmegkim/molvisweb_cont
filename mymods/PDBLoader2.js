@@ -132,6 +132,9 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
 			return ((x2 - x1)**2 + (y2 - y1)**2 + (z2 - z1)**2)**(1/2);
 		}
 //c, H, O, N, S, P c-c, c-o, 
+
+
+//Betty made changes to the isBond function
 		function isBond(atom1, atom2, distance) {
             var bond = false;
             var double_bond = false;
@@ -227,6 +230,8 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
               }
 
               return [bond, double_bond, triple_bond, partial_bond];
+
+			  //Betty's edit on isBond function ends here
 
               //END HERE
 
