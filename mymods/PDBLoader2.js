@@ -301,7 +301,8 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
 
                     let bondData = [ i+1, j+1 ];
 
-                    let start_x = atom1[0]; 
+                    //Betty made chages starting here
+					let start_x = atom1[0]; 
                     let start_y = atom1[1]; 
                     let start_z = atom1[2]; 
         
@@ -314,12 +315,15 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                     // (using isBond method -- later in code)
                     var distance = calculate_distance(start_x, start_y, start_z, end_x, end_y, end_z);
                     var isbond = isBond(atom1[4], atom2[4], distance);
-                    let is_singlebond = isbond[0];
+                    
+					//Betty created these variables for bond types
+					let is_singlebond = isbond[0];
                     let is_doublebond = isbond[1];
                     let is_triplebond = isbond[2];
                     let is_partialbond = isbond[3];
                     var order = 0;
                     
+					//
                     if (is_singlebond) order = 1;
                     else if (is_doublebond) order = 2
                     else if (is_triplebond) order = 3
@@ -333,14 +337,18 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                             _bonds_manual.push( [ i, j, order ] );
                             _bhash_manual[ h ] = _bonds_manual.length - 1; 
 
-                            if (is_singlebond){
+                            //Betty created these for drawing a line for single bond
+							if (is_singlebond){
 
                                 verticesBondsManual.push( start_x, start_y, start_z );
                                 verticesBondsManual.push( end_x, end_y, end_z );
                             }
                             else{
+
+								//Betty created this for finding bond vector and direction for making more than 1 bond (line)
                                 //bond vector
-                                                            
+                                 
+							
                                 const bondVec = new Vector3(end_x-start_x, end_y-start_y, end_z-start_z);
                                 const bondDir = bondVec.clone().normalize();
                                 
@@ -354,7 +362,8 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                                 
                                 const perp = new Vector3().crossVectors(bondDir, arbitrary).normalize();
                                 const offset = 0.1;
-                                if (is_doublebond){
+                                
+								if (is_doublebond){
                                     verticesBondsManual.push( start_x + perp.x*offset, start_y+perp.y*offset, start_z + perp.z*offset );
                                     verticesBondsManual.push( end_x + perp.x*offset, end_y+perp.y*offset, end_z +perp.z*offset);
                                     verticesBondsManual.push( start_x - perp.x*offset, start_y-perp.y*offset, start_z - perp.z*offset );
@@ -369,6 +378,8 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                                     verticesBondsManual.push( start_x - perp.x*offset, start_y-perp.y*offset, start_z - perp.z*offset );
                                     verticesBondsManual.push( end_x - perp.x*offset, end_y-perp.y*offset, end_z -perp.z*offset);
                                 }
+
+								//Betty's edit ends here
 
                             }
                             bonds_manual.push( bondData );
