@@ -165,16 +165,16 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                 let bondInfo = bondLengths[atom1]?.[atom2] ?? bondLengths[atom2]?.[atom1]
                 
                 if ((atom1 != "H") && (atom2 != "H")){
-                    single = bondInfo["single"]
-                    double = bondInfo["double"]
-                    triple = bondInfo["triple"]
-                    SD_thresh = threshold(single, double, range)
-                    DT_thresh = threshold(double, triple, range)
+                    var single = bondInfo["single"]
+                    var double = bondInfo["double"]
+                    var triple = bondInfo["triple"]
+                    var SD_thresh = threshold(single, double, range)
+                    var DT_thresh = threshold(double, triple, range)
                     return {single, double, triple, SD_thresh, DT_thresh}
                 }
 
                 else{
-                    single = bondInfo["single"]
+                    var single = bondInfo["single"]
                     return single
                 }
 
