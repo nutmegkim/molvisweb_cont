@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
-import { PDBLoader } from './mymods/PDBLoader.js';
+import { PDBLoader } from './mymods/PDBLoader2.js';
 
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
