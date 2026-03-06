@@ -17,6 +17,7 @@ const bondLengths = {
         O: {single: 1.42, double: 1.20, triple: 1.14}, 
         S: {single: 1.84, double: null, triple: null},  
         P: {single: 1.88, double: null, triple: null},
+		F: {single: 1.38, double: 1.34, triple: null},
 
         },
         H: {
@@ -25,18 +26,21 @@ const bondLengths = {
             O: {single: 0.97, double: null, triple: null},
             S: {single: 1.34, double: null, triple: null},
             P: {single: 1.44, double: null, triple: null},
+			F: {single: null, double: null, triple: null},
 
         },
 
         N: {
             N: {single: 1.44, double: 1.24, triple: 1.17}, 
             O: {single: 1.43, double: 1.20, triple: 1.06},
+			F: {single: null, double: null, triple: null},
 
         },
         O: {
             O: {single: 1.48, double: 1.21, triple: null},
             P:  {single: 1.65, double: 1.52, triple: null},
             S: {single: 1.60, double: 1.45, triple: null},
+			F: {single: null, double: null, triple: null},
 
         },
 
@@ -132,16 +136,13 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
 			return ((x2 - x1)**2 + (y2 - y1)**2 + (z2 - z1)**2)**(1/2);
 		}
 //c, H, O, N, S, P c-c, c-o, 
-
-
-//Betty made changes to the isBond function
 		function isBond(atom1, atom2, distance) {
             var bond = false;
             var double_bond = false;
             var triple_bond = false;
             var partial_bond = false;
             var SD_thresh;
-            var DT_thresh
+            var DT_thresh;
             const range = 0.07;
             
 
@@ -182,7 +183,7 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
 
              }
 
-             function bondOrder(single, double, triple, sdThresh, dtTresh){
+             function bondOrder(single, double, triple, SD_thresh, DT_thresh){
                 if((single != null) && (distance > (single - SD_thresh)) && (distance < (single +range))){
                     bond = true; 
                 }
@@ -231,8 +232,6 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
 
               return [bond, double_bond, triple_bond, partial_bond];
 
-			  //Betty's edit on isBond function ends here
-
               //END HERE
 
            
@@ -268,6 +267,7 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
 
             const verticesBondsManual = [];
             const verticesBondsConect = [];
+			//const colorsBondsManual = [];   //for partial bond
 
             /* const atomsInBondsManual = [];
             const atomsInBondsConect = []; */
@@ -306,8 +306,7 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
 
                     let bondData = [ i+1, j+1 ];
 
-                    //Betty made chages starting here
-					let start_x = atom1[0]; 
+                    let start_x = atom1[0]; 
                     let start_y = atom1[1]; 
                     let start_z = atom1[2]; 
         
@@ -319,16 +318,14 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                     // matches the bond distance between their corresponding atom types 
                     // (using isBond method -- later in code)
                     var distance = calculate_distance(start_x, start_y, start_z, end_x, end_y, end_z);
+					if (distance > 2.5) continue;
                     var isbond = isBond(atom1[4], atom2[4], distance);
-                    
-					//Betty created these variables for bond types
-					let is_singlebond = isbond[0];
+                    let is_singlebond = isbond[0];
                     let is_doublebond = isbond[1];
                     let is_triplebond = isbond[2];
                     let is_partialbond = isbond[3];
                     var order = 0;
                     
-					//
                     if (is_singlebond) order = 1;
                     else if (is_doublebond) order = 2
                     else if (is_triplebond) order = 3
@@ -342,18 +339,15 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                             _bonds_manual.push( [ i, j, order ] );
                             _bhash_manual[ h ] = _bonds_manual.length - 1; 
 
-                            //Betty created these for drawing a line for single bond
-							if (is_singlebond){
+                            if (is_singlebond){
 
                                 verticesBondsManual.push( start_x, start_y, start_z );
                                 verticesBondsManual.push( end_x, end_y, end_z );
+
                             }
                             else{
-
-								//Betty created this for finding bond vector and direction for making more than 1 bond (line)
                                 //bond vector
-                                 
-							
+                                                            
                                 const bondVec = new Vector3(end_x-start_x, end_y-start_y, end_z-start_z);
                                 const bondDir = bondVec.clone().normalize();
                                 
@@ -367,12 +361,13 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                                 
                                 const perp = new Vector3().crossVectors(bondDir, arbitrary).normalize();
                                 const offset = 0.1;
-                                
-								if (is_doublebond){
+                                if (is_doublebond){
                                     verticesBondsManual.push( start_x + perp.x*offset, start_y+perp.y*offset, start_z + perp.z*offset );
                                     verticesBondsManual.push( end_x + perp.x*offset, end_y+perp.y*offset, end_z +perp.z*offset);
                                     verticesBondsManual.push( start_x - perp.x*offset, start_y-perp.y*offset, start_z - perp.z*offset );
                                     verticesBondsManual.push( end_x - perp.x*offset, end_y-perp.y*offset, end_z -perp.z*offset);
+
+									
                                 }
                                 else if (is_triplebond){
                                     verticesBondsManual.push( start_x + perp.x*offset, start_y+perp.y*offset, start_z + perp.z*offset );
@@ -382,9 +377,9 @@ class PDBLoader extends Loader { // PDBLoader class extends Loader class from th
                                     
                                     verticesBondsManual.push( start_x - perp.x*offset, start_y-perp.y*offset, start_z - perp.z*offset );
                                     verticesBondsManual.push( end_x - perp.x*offset, end_y-perp.y*offset, end_z -perp.z*offset);
-                                }
 
-								//Betty's edit ends here
+                                }
+								
 
                             }
                             bonds_manual.push( bondData );
