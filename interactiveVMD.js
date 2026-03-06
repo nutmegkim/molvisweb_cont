@@ -1744,11 +1744,20 @@ function createGUI() {
     guis[currentRepID] = moleculeGUI; 
     guiContainers[currentRepID] = moleculeGUIdiv;
 
+    // defining a new constant to show the chain options set to the default
+    const chainOptions = {
+    'Abl Kinase': 'A',
+    'Ponatinib': 'D',
+    'Water': 'W',
+    'Backbone': 'backbone',
+    'All': 'all'
+    };
+
     // menus for the gui
     const styleMenu = moleculeGUI.add(params.repParams, 'representation', [CPK, VDW, lines]);
     const colorMenu = moleculeGUI.add(params.colorParams, 'color', [name, blue, green, red]);
     const residueMenu = moleculeGUI.add(params.residueParams, residue);
-    const chainMenu = moleculeGUI.add(params.chainParams, 'chain'); 
+    const chainMenu = moleculeGUI.add(params.chainParams, 'chain', chainOptions); 
     const withinMenu = moleculeGUI.add(params.withinParams, 'within');
     const withinDropdown = moleculeGUI.add(params.withinDropdownParams, 'withinDropdown', [residue, molecule]);
     const withinResMenu = moleculeGUI.add(params.withinResParams, 'withinRes');
