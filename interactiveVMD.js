@@ -262,16 +262,16 @@ function setUpControls() {
         document.addEventListener("keydown", (event) => {
             switch (event.code) {
                 case "ArrowRight":
-                controls.truck(-moveSpeed, 0, true);
+                controls.truck(moveSpeed, 0, true);
                     break;
                 case "ArrowLeft":
-                    controls.truck(moveSpeed, 0, true);
+                    controls.truck(-moveSpeed, 0, true);
                     break;
                 case "ArrowDown":
-                    controls.truck(0, -moveSpeed, true);
+                    controls.truck(0, moveSpeed, true);
                     break;
                 case "ArrowUp":
-                    controls.truck(0, moveSpeed, true);
+                    controls.truck(0, -moveSpeed, true);
                     break;
             }
         });
@@ -367,40 +367,6 @@ function init() {
         loadMolecule(molecule, () => { resetViewCameraWindow(); });
         resetInterface();
     });
-
-    // ----------------------------------------------------------
-    // File upload event listener for reading .pdb files directly
-    // ----------------------------------------------------------
-    const pdbForm = document.getElementById('pdb-upload-form');
-    if (pdbForm) {
-        pdbForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
-
-            const fileInput = document.getElementById('pdbFile');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Please choose a PDB file first.");
-                return;
-            }
-
-            const reader = new FileReader();
-
-            reader.onload = function(event) {
-                const pdbText = event.target.result;
-                console.log("Loaded PDB file:", file.name);
-                console.log(pdbText.substring(0, 300)); // preview text in console
-                currentMolecule = pdbText;
-
-                // Replace current molecule with uploaded one:
-                resetScene(); // optional, clear current scene if you have a function for that
-                loadMolecule(pdbText,() => { resetViewCameraWindow(); });
-                resetInterface(); // optional, reinitialize controls if needed
-            };
-
-            reader.readAsText(file);
-        });
-    }
-
 
     createGUI();    
 }
@@ -986,6 +952,7 @@ function loadMolecule(model, callback) {
         popdown();
     } );
 }
+
 
 function hideText(repNum) {
     root.traverse( (obj) => {
@@ -1744,20 +1711,11 @@ function createGUI() {
     guis[currentRepID] = moleculeGUI; 
     guiContainers[currentRepID] = moleculeGUIdiv;
 
-    // defining a new constant to show the chain options set to the default
-    const chainOptions = {
-    'Abl Kinase': 'A',
-    'Ponatinib': 'D',
-    'Water': 'W',
-    'Backbone': 'backbone',
-    'All': 'all'
-    };
-
     // menus for the gui
     const styleMenu = moleculeGUI.add(params.repParams, 'representation', [CPK, VDW, lines]);
     const colorMenu = moleculeGUI.add(params.colorParams, 'color', [name, blue, green, red]);
     const residueMenu = moleculeGUI.add(params.residueParams, residue);
-    const chainMenu = moleculeGUI.add(params.chainParams, 'chain', chainOptions); 
+    const chainMenu = moleculeGUI.add(params.chainParams, 'chain'); 
     const withinMenu = moleculeGUI.add(params.withinParams, 'within');
     const withinDropdown = moleculeGUI.add(params.withinDropdownParams, 'withinDropdown', [residue, molecule]);
     const withinResMenu = moleculeGUI.add(params.withinResParams, 'withinRes');
@@ -2675,15 +2633,18 @@ function createLine(a, b) {
     geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3)); // 3 values per vertex (x, y, z)
     geom.setAttribute('color', new THREE.BufferAttribute(colors, 3)); // RGB colors
 
+    
+
     // Define material with vertex colors
     var mat = new THREE.LineBasicMaterial({ 
         vertexColors: true, // Enable per-vertex colors
         linewidth: 5 // Note: linewidth only works on Windows with WebGL1
     });
 
-    return new THREE.Line(geom, mat);
+    return new THREE.Line(geom, mat);   
 }
 
+//geom.setAttribute('color', new THREE.BufferAttribute(colorsBondsManual, 3));
 
 function convertMousePositionToNDC(event) {
     var mx = event.clientX;
