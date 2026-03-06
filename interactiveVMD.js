@@ -2908,8 +2908,8 @@ function raycast(event) {
             let camPos = camera.position.clone();
             console.log("camera.position before", camPos);
 
-            let obj = selectedObject.instancedMesh;
-            let instancedMesh = obj.instancedMesh;
+            //let obj = selectedObject.instancedMesh;
+            let instancedMesh = selectedObject.instancedMesh;
             
             if (camera.isOrthographicCamera) { // orthographic camera, uses imported controls
                 
